@@ -31,7 +31,7 @@ jobs:
         shell: pwsh
         run: .\.github\workflows\scripts\archive-name.ps1
 
-      - name: Build Release for Linux
+      - name: Build Release for Linux (${{ runner.arch }})
         if: startsWith(matrix.os, 'ubuntu')
         uses: ./.github/actions/build-linux
         with:

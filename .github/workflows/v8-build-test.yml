@@ -48,7 +48,7 @@ jobs:
         shell: pwsh
         run: .\.github\workflows\scripts\archive-name.ps1
 
-      - name: Build V8 for Linux
+      - name: Build V8 for Linux (${{ runner.arch }})
         if: startsWith(matrix.os, 'ubuntu')
         uses: ./.github/actions/build-linux
         with:
