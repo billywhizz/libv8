@@ -33,13 +33,13 @@ jobs:
             .gclient_entries
             .gclient_previous_sync_commits
             .cipd
-          key: ${{ runner.os }}-${{ matrix.platform }}:libv8:v8:${{ hashFiles('**/VERSION') }}
+          key: ${{ runner.os }}-${{ runner.arch }}:libv8:v8:${{ hashFiles('**/VERSION') }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.platform }}:libv8:v8:
+            ${{ runner.os }}-${{ runner.arch }}:libv8:v8:
       - name: Initialize Archive Name
         shell: bash
         run: ./.github/workflows/scripts/archive-name.sh
-      - name: Build V8 for macOS (${{ matrix.platform }})
+      - name: Build V8 for macOS (${{ runner.arch }})
         uses: ./.github/actions/build-macos
         with:
           archive-name: ${{ env.ARCHIVE_NAME }}
@@ -75,9 +75,9 @@ jobs:
             .gclient_entries
             .gclient_previous_sync_commits
             .cipd
-          key: ${{ runner.os }}-${{ matrix.platform }}:libv8:v8:${{ hashFiles('**/VERSION') }}
+          key: ${{ runner.os }}-${{ runner.arch }}:libv8:v8:${{ hashFiles('**/VERSION') }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.platform }}:libv8:v8:
+            ${{ runner.os }}-${{ runner.arch }}:libv8:v8:
 
       - name: Initialize Archive Name
         if: runner.os != 'Windows'
@@ -89,13 +89,13 @@ jobs:
         shell: pwsh
         run: .\.github\workflows\scripts\archive-name.ps1
 
-      - name: Build V8 for Linux (${{ matrix.platform }})
+      - name: Build V8 for Linux (${{ runner.arch }})
         if: startsWith(matrix.os, 'ubuntu')
         uses: ./.github/actions/build-linux
         with:
           archive-name: ${{ env.ARCHIVE_NAME }}
 
-      - name: Build V8 for Windows
+      - name: Build V8 for Windows (${{ runner.arch }})
         if: startsWith(matrix.os, 'windows')
         uses: ./.github/actions/build-windows
         with:
