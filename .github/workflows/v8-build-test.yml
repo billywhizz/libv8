@@ -12,11 +12,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-test-macos:
+  build-test-macos-x64:
     name: Build V8
     strategy:
+      fail-fast: false
       matrix:
-        os: [macos-13, macos-latest]
+        os: [macos-13]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout Code
@@ -52,12 +53,12 @@ jobs:
             *.7z
           retention-days: 7
 
-  build-test-linux-win:
+  build-test-macos-arm64:
     name: Build V8
     strategy:
+      fail-fast: false
       matrix:
-        platform: [x64,arm64]
-        os: [ubuntu-latest, windows-latest]
+        os: [macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout Code
@@ -66,7 +67,6 @@ jobs:
           submodules: true
           clean: true
           fetch-depth: 1
-
       - name: Restore V8 Cache
         uses: actions/cache@v4
         with:
@@ -78,29 +78,181 @@ jobs:
           key: ${{ runner.os }}-${{ runner.arch }}:libv8:v8:${{ hashFiles('**/VERSION') }}
           restore-keys: |
             ${{ runner.os }}-${{ runner.arch }}:libv8:v8:
-
       - name: Initialize Archive Name
-        if: runner.os != 'Windows'
         shell: bash
         run: ./.github/workflows/scripts/archive-name.sh
+      - name: Build V8 for macOS (${{ runner.arch }})
+        uses: ./.github/actions/build-macos
+        with:
+          archive-name: ${{ env.ARCHIVE_NAME }}
+      - name: Archive V8 Library
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ARCHIVE_NAME }}
+          path: |
+            *.tar.xz
+            *.7z
+          retention-days: 7
 
-      - name: Initialize Archive Name (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: .\.github\workflows\scripts\archive-name.ps1
-
+  build-test-linux-x64:
+    name: Build V8
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [x64]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          clean: true
+          fetch-depth: 1
+      - name: Restore V8 Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            v8
+            .gclient_entries
+            .gclient_previous_sync_commits
+            .cipd
+          key: ${{ runner.os }}-${{ runner.arch }}:libv8:v8:${{ hashFiles('**/VERSION') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ runner.arch }}:libv8:v8:
       - name: Build V8 for Linux (${{ runner.arch }})
-        if: startsWith(matrix.os, 'ubuntu')
         uses: ./.github/actions/build-linux
         with:
           archive-name: ${{ env.ARCHIVE_NAME }}
+      - name: Archive V8 Library
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ARCHIVE_NAME }}
+          path: |
+            *.tar.xz
+            *.7z
+          retention-days: 7
 
+  build-test-linux-arm64:
+    name: Build V8
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [arm64]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          clean: true
+          fetch-depth: 1
+      - name: Restore V8 Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            v8
+            .gclient_entries
+            .gclient_previous_sync_commits
+            .cipd
+          key: ${{ runner.os }}-${{ runner.arch }}:libv8:v8:${{ hashFiles('**/VERSION') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ runner.arch }}:libv8:v8:
+      - name: Build V8 for Linux (${{ runner.arch }})
+        uses: ./.github/actions/build-linux
+        with:
+          archive-name: ${{ env.ARCHIVE_NAME }}
+      - name: Archive V8 Library
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ARCHIVE_NAME }}
+          path: |
+            *.tar.xz
+            *.7z
+          retention-days: 7
+
+  build-test-win-x64:
+    name: Build V8
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [x64]
+        os: [windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          clean: true
+          fetch-depth: 1
+      - name: Restore V8 Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            v8
+            .gclient_entries
+            .gclient_previous_sync_commits
+            .cipd
+          key: ${{ runner.os }}-${{ runner.arch }}:libv8:v8:${{ hashFiles('**/VERSION') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ runner.arch }}:libv8:v8:
+      - name: Initialize Archive Name
+        shell: bash
+        run: ./.github/workflows/scripts/archive-name.sh
+      - name: Initialize Archive Name (Windows)
+        shell: pwsh
+        run: .\.github\workflows\scripts\archive-name.ps1
       - name: Build V8 for Windows (${{ runner.arch }})
-        if: startsWith(matrix.os, 'windows')
         uses: ./.github/actions/build-windows
         with:
           archive-name: ${{ env.ARCHIVE_NAME }}
+      - name: Archive V8 Library
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ARCHIVE_NAME }}
+          path: |
+            *.tar.xz
+            *.7z
+          retention-days: 7
 
+  build-test-win-arm64:
+    name: Build V8
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [arm64]
+        os: [windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          clean: true
+          fetch-depth: 1
+      - name: Restore V8 Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            v8
+            .gclient_entries
+            .gclient_previous_sync_commits
+            .cipd
+          key: ${{ runner.os }}-${{ runner.arch }}:libv8:v8:${{ hashFiles('**/VERSION') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ runner.arch }}:libv8:v8:
+      - name: Initialize Archive Name
+        shell: bash
+        run: ./.github/workflows/scripts/archive-name.sh
+      - name: Initialize Archive Name (Windows)
+        shell: pwsh
+        run: .\.github\workflows\scripts\archive-name.ps1
+      - name: Build V8 for Windows (${{ runner.arch }})
+        uses: ./.github/actions/build-windows
+        with:
+          archive-name: ${{ env.ARCHIVE_NAME }}
       - name: Archive V8 Library
         uses: actions/upload-artifact@v4
         with:
