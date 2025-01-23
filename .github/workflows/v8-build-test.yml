@@ -13,6 +13,7 @@ on:
 
 jobs:
   build-test-macos-x64:
+    if: ${{ false }}  # disable
     name: Build V8
     strategy:
       fail-fast: false
@@ -54,6 +55,7 @@ jobs:
           retention-days: 7
 
   build-test-macos-arm64:
+    if: ${{ false }}  # disable
     name: Build V8
     strategy:
       fail-fast: false
@@ -95,6 +97,7 @@ jobs:
           retention-days: 7
 
   build-test-linux-x64:
+    if: ${{ false }}  # disable
     name: Build V8
     strategy:
       fail-fast: false
@@ -142,7 +145,7 @@ jobs:
       fail-fast: false
       matrix:
         platform: [arm64]
-        os: [ubuntu-22.04-arm]
+        os: [ubuntu-24.04-arm]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout Code
@@ -179,6 +182,7 @@ jobs:
           retention-days: 7
 
   build-test-win-x64:
+    if: ${{ false }}  # disable
     name: Build V8
     strategy:
       fail-fast: false
@@ -224,6 +228,7 @@ jobs:
           retention-days: 7
 
   build-test-win-arm64:
+    if: ${{ false }}  # disable
     name: Build V8
     strategy:
       fail-fast: false
