@@ -120,6 +120,9 @@ jobs:
           key: ${{ runner.os }}-${{ runner.arch }}:libv8:v8:${{ hashFiles('**/VERSION') }}
           restore-keys: |
             ${{ runner.os }}-${{ runner.arch }}:libv8:v8:
+      - name: Initialize Archive Name
+        shell: bash
+        run: ./.github/workflows/scripts/archive-name.sh
       - name: Build V8 for Linux (${{ runner.arch }})
         uses: ./.github/actions/build-linux
         with:
@@ -159,6 +162,9 @@ jobs:
           key: ${{ runner.os }}-${{ runner.arch }}:libv8:v8:${{ hashFiles('**/VERSION') }}
           restore-keys: |
             ${{ runner.os }}-${{ runner.arch }}:libv8:v8:
+      - name: Initialize Archive Name
+        shell: bash
+        run: ./.github/workflows/scripts/archive-name.sh
       - name: Build V8 for Linux (${{ runner.arch }})
         uses: ./.github/actions/build-linux
         with:
