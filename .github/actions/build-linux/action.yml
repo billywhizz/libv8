@@ -11,13 +11,13 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Restore CCache
-      uses: actions/cache@v4
-      with:
-        path: .ccache
-        key: ${{ runner.os }}-${{ runner.arch }}:libv8:ccache:${{ github.run_number }}
-        restore-keys: |
-          ${{ runner.os }}-${{ runner.arch }}:libv8:ccache:
+#    - name: Restore CCache
+#      uses: actions/cache@v4
+#      with:
+#        path: .ccache
+#        key: ${{ runner.os }}-${{ runner.arch }}:libv8:ccache:${{ github.run_number }}
+#        restore-keys: |
+#          ${{ runner.os }}-${{ runner.arch }}:libv8:ccache:
 
     - name: Setup Python
       uses: actions/setup-python@v5
@@ -46,9 +46,9 @@ runs:
       shell: bash
       run: ./v8_compile.sh
 
-    - name: Show CCache Status
-      shell: bash
-      run: ccache -s
+#    - name: Show CCache Status
+#      shell: bash
+#      run: ccache -s
 
     - name: Test V8
       shell: bash
